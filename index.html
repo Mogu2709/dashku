@@ -2,207 +2,291 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard Pribadi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Dashku</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=gg+Sans:wght@400;500;600&family=Noto+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- LOGIN SCREEN -->
+  <!-- ===== LOGIN ===== -->
   <div id="login-screen" class="login-screen">
-    <div class="login-box">
-      <div class="login-logo">📋</div>
-      <h1 class="login-title">Dashboard Pribadi</h1>
-      <p class="login-sub">Masukkan namamu untuk melanjutkan</p>
-      <input type="text" id="login-input" placeholder="Nama kamu..." maxlength="32" autocomplete="off" />
-      <button id="login-btn" onclick="handleLogin()">Masuk →</button>
-      <p class="login-hint">Data tersimpan di browser kamu dan tidak akan hilang</p>
+    <div class="login-card">
+      <div class="login-icon">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <rect width="48" height="48" rx="16" fill="#5865F2"/>
+          <path d="M14 24C14 18.477 18.477 14 24 14s10 4.477 10 10-4.477 10-10 10S14 29.523 14 24z" fill="white" opacity="0.2"/>
+          <path d="M20 22h8M20 26h5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h1 class="login-title">Selamat datang!</h1>
+      <p class="login-sub">Masuk untuk melihat dashboard kamu</p>
+      <div class="login-field">
+        <label class="field-label">NAMA PENGGUNA</label>
+        <input type="text" id="login-input" placeholder="Masukkan namamu..." maxlength="32" autocomplete="off" />
+      </div>
+      <button id="login-btn" class="login-submit" onclick="handleLogin()">Masuk</button>
+      <p class="login-hint">Data kamu aman tersimpan di browser ini</p>
     </div>
   </div>
 
-  <!-- MAIN DASHBOARD -->
+  <!-- ===== APP ===== -->
   <div id="app" class="app hidden">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <div class="sidebar-top">
-        <div class="brand">Dashku</div>
-        <div class="user-pill" id="user-pill"></div>
+    <!-- GUILD RAIL (far left icons, desktop only) -->
+    <div class="guild-rail" id="guild-rail">
+      <div class="guild-icon active" title="Dashboard" onclick="switchTab('overview')">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M2 4a1 1 0 011-1h5a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1V4zM11 4a1 1 0 011-1h5a1 1 0 011 1v2a1 1 0 01-1 1h-5a1 1 0 01-1-1V4zM11 10a1 1 0 011-1h5a1 1 0 011 1v5a1 1 0 01-1 1h-5a1 1 0 01-1-1v-5zM2 12a1 1 0 011-1h5a1 1 0 011 1v3a1 1 0 01-1 1H3a1 1 0 01-1-1v-3z"/>
+        </svg>
       </div>
-      <nav class="sidebar-nav">
-        <button class="nav-btn active" data-tab="overview" onclick="switchTab('overview', this)">
-          <span class="nav-icon">◈</span> Ringkasan
+      <div class="guild-divider"></div>
+      <div class="guild-icon" title="Keuangan" onclick="switchTab('finance')">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM2 9h16v5a2 2 0 01-2 2H4a2 2 0 01-2-2V9zm4 3a1 1 0 000 2h4a1 1 0 000-2H6z"/>
+        </svg>
+      </div>
+      <div class="guild-icon" title="Tugas" onclick="switchTab('tasks')">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9zM4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- CHANNEL SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <span class="sidebar-server-name">Dashku</span>
+        <button class="sidebar-close" onclick="closeSidebar()" id="sidebar-close-btn">✕</button>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="section-label">NAVIGASI</div>
+        <button class="channel-btn active" data-tab="overview" onclick="switchTab('overview', this)">
+          <span class="ch-hash"># </span>ringkasan
         </button>
-        <button class="nav-btn" data-tab="finance" onclick="switchTab('finance', this)">
-          <span class="nav-icon">◎</span> Keuangan
+        <button class="channel-btn" data-tab="finance" onclick="switchTab('finance', this)">
+          <span class="ch-hash"># </span>keuangan
         </button>
-        <button class="nav-btn" data-tab="tasks" onclick="switchTab('tasks', this)">
-          <span class="nav-icon">◷</span> Tugas
+        <button class="channel-btn" data-tab="tasks" onclick="switchTab('tasks', this)">
+          <span class="ch-hash"># </span>tugas
         </button>
-      </nav>
-      <button class="logout-btn" onclick="logout()">Ganti Pengguna</button>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="section-label">ANGGARAN BULAN INI</div>
+        <div id="sidebar-budget-mini"></div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-avatar" id="sidebar-avatar"></div>
+        <div class="user-info">
+          <div class="user-name" id="sidebar-username"></div>
+          <div class="user-status">🟢 Online</div>
+        </div>
+        <button class="icon-btn" onclick="logout()" title="Keluar">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h6a1 1 0 100-2H4V5h5a1 1 0 000-2H3zm11.707 4.293a1 1 0 010 1.414L12.414 11H16a1 1 0 110 2h-3.586l2.293 2.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
     </aside>
 
     <!-- MAIN CONTENT -->
-    <main class="main">
-
-      <!-- OVERVIEW TAB -->
-      <div id="tab-overview" class="tab-content active">
-        <div class="page-header">
-          <div>
-            <h2 class="page-title" id="greeting-text">Halo!</h2>
-            <p class="page-sub" id="date-text"></p>
-          </div>
-        </div>
-
-        <!-- METRIC CARDS -->
-        <div class="metrics-grid">
-          <div class="metric-card">
-            <div class="metric-label">Saldo Saat Ini</div>
-            <div class="metric-value" id="ov-saldo">Rp 0</div>
-            <div class="metric-note" id="ov-saldo-note">—</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">Pemasukan Bulan Ini</div>
-            <div class="metric-value green" id="ov-income">Rp 0</div>
-            <div class="metric-note" id="ov-income-note">—</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">Pengeluaran Bulan Ini</div>
-            <div class="metric-value red" id="ov-expense">Rp 0</div>
-            <div class="metric-note" id="ov-expense-note">—</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">Tugas Selesai</div>
-            <div class="metric-value" id="ov-tasks">0 / 0</div>
-            <div class="metric-note" id="ov-tasks-note">—</div>
-          </div>
-        </div>
-
-        <!-- RECENT TRANSACTIONS + TODAY TASKS -->
-        <div class="two-col">
-          <div class="card">
-            <div class="card-header">
-              <span class="card-title">Transaksi Terakhir</span>
-              <button class="link-btn" onclick="switchTab('finance', document.querySelector('[data-tab=finance]'))">Lihat semua →</button>
-            </div>
-            <div id="ov-tx-list" class="tx-list">
-              <p class="empty-msg">Belum ada transaksi.</p>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-header">
-              <span class="card-title">Tugas Hari Ini</span>
-              <button class="link-btn" onclick="switchTab('tasks', document.querySelector('[data-tab=tasks]'))">Lihat semua →</button>
-            </div>
-            <div id="ov-task-list" class="task-list">
-              <p class="empty-msg">Belum ada tugas.</p>
-            </div>
-          </div>
-        </div>
+    <div class="main-wrap">
+      <!-- TOPBAR -->
+      <div class="topbar">
+        <button class="topbar-menu" onclick="toggleSidebar()" id="menu-btn">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+        <span class="topbar-ch"><span class="ch-hash"># </span><span id="topbar-title">ringkasan</span></span>
+        <div class="topbar-right" id="topbar-date"></div>
       </div>
 
-      <!-- FINANCE TAB -->
-      <div id="tab-finance" class="tab-content">
-        <div class="page-header">
-          <div>
-            <h2 class="page-title">Keuangan</h2>
-            <p class="page-sub">Kelola pemasukan & pengeluaran kamu</p>
+      <main class="main" id="main-content">
+
+        <!-- OVERVIEW -->
+        <div id="tab-overview" class="tab active">
+          <div class="content-header">
+            <div>
+              <h2 id="greeting-text" class="page-title">Halo!</h2>
+              <p class="page-sub" id="date-text"></p>
+            </div>
           </div>
-          <button class="primary-btn" onclick="openModal('modal-tx')">+ Tambah Transaksi</button>
-        </div>
 
-        <!-- BUDGET BARS -->
-        <div class="card" style="margin-bottom:1.5rem;">
-          <div class="card-header">
-            <span class="card-title">Anggaran per Kategori</span>
-            <button class="link-btn" onclick="openModal('modal-budget')">Edit anggaran →</button>
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-icon" style="background:#5865F220;">💰</div>
+              <div>
+                <div class="metric-label">Saldo</div>
+                <div class="metric-val" id="ov-saldo">Rp 0</div>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon" style="background:#57F28720;">📈</div>
+              <div>
+                <div class="metric-label">Pemasukan</div>
+                <div class="metric-val green" id="ov-income">Rp 0</div>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon" style="background:#ED424220;">📉</div>
+              <div>
+                <div class="metric-label">Pengeluaran</div>
+                <div class="metric-val red" id="ov-expense">Rp 0</div>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon" style="background:#FEE75C20;">✅</div>
+              <div>
+                <div class="metric-label">Tugas Selesai</div>
+                <div class="metric-val" id="ov-tasks">0/0</div>
+              </div>
+            </div>
           </div>
-          <div id="budget-bars"></div>
-        </div>
 
-        <!-- ALL TRANSACTIONS -->
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">Semua Transaksi</span>
-            <select id="filter-month" onchange="renderFinance()" style="font-size:12px; padding:4px 8px; border:0.5px solid #ddd; border-radius:6px; background:transparent; color:inherit; cursor:pointer;"></select>
+          <div class="two-col">
+            <div class="dc-card">
+              <div class="dc-card-header">
+                <span>Transaksi Terakhir</span>
+                <button class="text-btn" onclick="switchTab('finance')">Lihat semua →</button>
+              </div>
+              <div id="ov-tx-list"><p class="empty">Belum ada transaksi.</p></div>
+            </div>
+            <div class="dc-card">
+              <div class="dc-card-header">
+                <span>Tugas Hari Ini</span>
+                <button class="text-btn" onclick="switchTab('tasks')">Lihat semua →</button>
+              </div>
+              <div id="ov-task-list"><p class="empty">Belum ada tugas hari ini.</p></div>
+            </div>
           </div>
-          <div id="all-tx-list" class="tx-list"></div>
         </div>
-      </div>
 
-      <!-- TASKS TAB -->
-      <div id="tab-tasks" class="tab-content">
-        <div class="page-header">
-          <div>
-            <h2 class="page-title">Tugas</h2>
-            <p class="page-sub">Rencanakan hari kamu</p>
+        <!-- FINANCE -->
+        <div id="tab-finance" class="tab">
+          <div class="content-header">
+            <div>
+              <h2 class="page-title">Keuangan</h2>
+              <p class="page-sub">Pantau pemasukan & pengeluaran</p>
+            </div>
+            <button class="dc-btn primary" onclick="openModal('modal-tx')">+ Transaksi</button>
           </div>
-          <button class="primary-btn" onclick="openModal('modal-task')">+ Tambah Tugas</button>
+
+          <div class="dc-card" style="margin-bottom:1rem;">
+            <div class="dc-card-header">
+              <span>Anggaran Kategori</span>
+              <button class="text-btn" onclick="openModal('modal-budget')">Edit →</button>
+            </div>
+            <div id="budget-bars"></div>
+          </div>
+
+          <div class="dc-card">
+            <div class="dc-card-header">
+              <span>Semua Transaksi</span>
+              <select id="filter-month" onchange="renderAllTx()" class="dc-select"></select>
+            </div>
+            <div id="all-tx-list"></div>
+          </div>
         </div>
 
-        <div class="task-filters">
-          <button class="filter-chip active" data-filter="all" onclick="filterTasks('all', this)">Semua</button>
-          <button class="filter-chip" data-filter="today" onclick="filterTasks('today', this)">Hari ini</button>
-          <button class="filter-chip" data-filter="upcoming" onclick="filterTasks('upcoming', this)">Mendatang</button>
-          <button class="filter-chip" data-filter="done" onclick="filterTasks('done', this)">Selesai</button>
+        <!-- TASKS -->
+        <div id="tab-tasks" class="tab">
+          <div class="content-header">
+            <div>
+              <h2 class="page-title">Tugas</h2>
+              <p class="page-sub">Rencanakan harimu</p>
+            </div>
+            <button class="dc-btn primary" onclick="openModal('modal-task')">+ Tugas</button>
+          </div>
+
+          <div class="filter-row">
+            <button class="pill active" data-filter="all" onclick="filterTasks('all',this)">Semua</button>
+            <button class="pill" data-filter="today" onclick="filterTasks('today',this)">Hari ini</button>
+            <button class="pill" data-filter="upcoming" onclick="filterTasks('upcoming',this)">Mendatang</button>
+            <button class="pill" data-filter="done" onclick="filterTasks('done',this)">Selesai</button>
+          </div>
+
+          <div id="task-list-main"></div>
         </div>
 
-        <div id="task-list-main" class="task-list-full"></div>
-      </div>
+      </main>
 
-    </main>
-  </div>
+      <!-- MOBILE BOTTOM NAV -->
+      <nav class="bottom-nav" id="bottom-nav">
+        <button class="bnav-btn active" data-tab="overview" onclick="switchTab('overview',this)">
+          <svg width="22" height="22" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M2 4a1 1 0 011-1h5a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1V4zM11 4a1 1 0 011-1h5a1 1 0 011 1v2a1 1 0 01-1 1h-5a1 1 0 01-1-1V4zM11 10a1 1 0 011-1h5a1 1 0 011 1v5a1 1 0 01-1 1h-5a1 1 0 01-1-1v-5zM2 12a1 1 0 011-1h5a1 1 0 011 1v3a1 1 0 01-1 1H3a1 1 0 01-1-1v-3z"/>
+          </svg>
+          <span>Ringkasan</span>
+        </button>
+        <button class="bnav-btn" data-tab="finance" onclick="switchTab('finance',this)">
+          <svg width="22" height="22" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM2 9h16v5a2 2 0 01-2 2H4a2 2 0 01-2-2V9zm4 3a1 1 0 000 2h4a1 1 0 000-2H6z"/>
+          </svg>
+          <span>Keuangan</span>
+        </button>
+        <button class="bnav-btn" data-tab="tasks" onclick="switchTab('tasks',this)">
+          <svg width="22" height="22" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9zM4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"/>
+          </svg>
+          <span>Tugas</span>
+        </button>
+        <button class="bnav-btn" onclick="openMobileProfile()">
+          <svg width="22" height="22" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+          </svg>
+          <span>Profil</span>
+        </button>
+      </nav>
+    </div><!-- /main-wrap -->
+
+  </div><!-- /app -->
+
+  <!-- SIDEBAR OVERLAY (mobile) -->
+  <div class="sidebar-overlay hidden" id="sidebar-overlay" onclick="closeSidebar()"></div>
 
   <!-- MODAL: ADD TRANSACTION -->
   <div id="modal-tx" class="modal-overlay hidden" onclick="closeModalOutside(event,'modal-tx')">
     <div class="modal">
       <div class="modal-header">
         <h3>Tambah Transaksi</h3>
-        <button onclick="closeModal('modal-tx')" class="modal-close">✕</button>
+        <button class="modal-close" onclick="closeModal('modal-tx')">✕</button>
       </div>
       <div class="modal-body">
-        <div class="form-group">
-          <label>Jenis</label>
-          <div class="radio-group">
-            <label class="radio-opt"><input type="radio" name="tx-type" value="expense" checked /> Pengeluaran</label>
-            <label class="radio-opt"><input type="radio" name="tx-type" value="income" /> Pemasukan</label>
-          </div>
+        <div class="radio-toggle">
+          <label class="toggle-opt"><input type="radio" name="tx-type" value="expense" checked/><span>Pengeluaran</span></label>
+          <label class="toggle-opt"><input type="radio" name="tx-type" value="income"/><span>Pemasukan</span></label>
         </div>
         <div class="form-group">
           <label>Nama</label>
-          <input type="text" id="tx-name" placeholder="Contoh: Makan Siang" />
+          <input type="text" id="tx-name" placeholder="Contoh: Makan siang"/>
         </div>
         <div class="form-group">
           <label>Jumlah (Rp)</label>
-          <input type="number" id="tx-amount" placeholder="Contoh: 35000" min="0" />
+          <input type="number" id="tx-amount" placeholder="35000" min="0"/>
         </div>
         <div class="form-group">
           <label>Kategori</label>
           <select id="tx-cat">
-            <option>Makanan & Minuman</option>
-            <option>Transportasi</option>
-            <option>Hiburan</option>
-            <option>Tagihan</option>
-            <option>Kesehatan</option>
-            <option>Belanja</option>
-            <option>Tabungan</option>
-            <option>Gaji</option>
-            <option>Freelance</option>
-            <option>Lainnya</option>
+            <option>Makanan & Minuman</option><option>Transportasi</option>
+            <option>Hiburan</option><option>Tagihan</option><option>Kesehatan</option>
+            <option>Belanja</option><option>Tabungan</option><option>Gaji</option>
+            <option>Freelance</option><option>Lainnya</option>
           </select>
         </div>
         <div class="form-group">
           <label>Tanggal</label>
-          <input type="date" id="tx-date" />
+          <input type="date" id="tx-date"/>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="secondary-btn" onclick="closeModal('modal-tx')">Batal</button>
-        <button class="primary-btn" onclick="saveTx()">Simpan</button>
+        <button class="dc-btn ghost" onclick="closeModal('modal-tx')">Batal</button>
+        <button class="dc-btn primary" onclick="saveTx()">Simpan</button>
       </div>
     </div>
   </div>
@@ -212,12 +296,12 @@
     <div class="modal">
       <div class="modal-header">
         <h3>Edit Anggaran</h3>
-        <button onclick="closeModal('modal-budget')" class="modal-close">✕</button>
+        <button class="modal-close" onclick="closeModal('modal-budget')">✕</button>
       </div>
       <div class="modal-body" id="budget-form"></div>
       <div class="modal-footer">
-        <button class="secondary-btn" onclick="closeModal('modal-budget')">Batal</button>
-        <button class="primary-btn" onclick="saveBudget()">Simpan</button>
+        <button class="dc-btn ghost" onclick="closeModal('modal-budget')">Batal</button>
+        <button class="dc-btn primary" onclick="saveBudget()">Simpan</button>
       </div>
     </div>
   </div>
@@ -227,40 +311,54 @@
     <div class="modal">
       <div class="modal-header">
         <h3>Tambah Tugas</h3>
-        <button onclick="closeModal('modal-task')" class="modal-close">✕</button>
+        <button class="modal-close" onclick="closeModal('modal-task')">✕</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
           <label>Nama Tugas</label>
-          <input type="text" id="task-name" placeholder="Contoh: Meeting jam 10 pagi" />
+          <input type="text" id="task-name" placeholder="Contoh: Meeting jam 10"/>
         </div>
         <div class="form-group">
           <label>Tanggal</label>
-          <input type="date" id="task-date" />
+          <input type="date" id="task-date"/>
         </div>
         <div class="form-group">
           <label>Kategori</label>
           <select id="task-cat">
-            <option>Kerja</option>
-            <option>Kesehatan</option>
-            <option>Personal</option>
-            <option>Keuangan</option>
-            <option>Belajar</option>
-            <option>Lainnya</option>
+            <option>Kerja</option><option>Kesehatan</option><option>Personal</option>
+            <option>Keuangan</option><option>Belajar</option><option>Lainnya</option>
           </select>
         </div>
         <div class="form-group">
           <label>Prioritas</label>
           <select id="task-priority">
             <option value="normal">Normal</option>
-            <option value="high">Tinggi</option>
-            <option value="low">Rendah</option>
+            <option value="high">Tinggi 🔴</option>
+            <option value="low">Rendah 🟢</option>
           </select>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="secondary-btn" onclick="closeModal('modal-task')">Batal</button>
-        <button class="primary-btn" onclick="saveTask()">Simpan</button>
+        <button class="dc-btn ghost" onclick="closeModal('modal-task')">Batal</button>
+        <button class="dc-btn primary" onclick="saveTask()">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: MOBILE PROFILE -->
+  <div id="modal-profile" class="modal-overlay hidden" onclick="closeModalOutside(event,'modal-profile')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Profil</h3>
+        <button class="modal-close" onclick="closeModal('modal-profile')">✕</button>
+      </div>
+      <div class="modal-body" style="text-align:center;padding:1.5rem;">
+        <div class="profile-avatar" id="profile-avatar-big"></div>
+        <div class="profile-name" id="profile-name-big"></div>
+        <div class="profile-status">🟢 Online</div>
+      </div>
+      <div class="modal-footer" style="justify-content:center;">
+        <button class="dc-btn danger" onclick="logout()">Ganti Pengguna</button>
       </div>
     </div>
   </div>
