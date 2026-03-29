@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Pribadi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- LOGIN SCREEN -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-box">
+      <div class="login-logo">📋</div>
+      <h1 class="login-title">Dashboard Pribadi</h1>
+      <p class="login-sub">Masukkan namamu untuk melanjutkan</p>
+      <input type="text" id="login-input" placeholder="Nama kamu..." maxlength="32" autocomplete="off" />
+      <button id="login-btn" onclick="handleLogin()">Masuk →</button>
+      <p class="login-hint">Data tersimpan di browser kamu dan tidak akan hilang</p>
+    </div>
+  </div>
+
+  <!-- MAIN DASHBOARD -->
+  <div id="app" class="app hidden">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <div class="brand">Dashku</div>
+        <div class="user-pill" id="user-pill"></div>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-btn active" data-tab="overview" onclick="switchTab('overview', this)">
+          <span class="nav-icon">◈</span> Ringkasan
+        </button>
+        <button class="nav-btn" data-tab="finance" onclick="switchTab('finance', this)">
+          <span class="nav-icon">◎</span> Keuangan
+        </button>
+        <button class="nav-btn" data-tab="tasks" onclick="switchTab('tasks', this)">
+          <span class="nav-icon">◷</span> Tugas
+        </button>
+      </nav>
+      <button class="logout-btn" onclick="logout()">Ganti Pengguna</button>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+      <!-- OVERVIEW TAB -->
+      <div id="tab-overview" class="tab-content active">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title" id="greeting-text">Halo!</h2>
+            <p class="page-sub" id="date-text"></p>
+          </div>
+        </div>
+
+        <!-- METRIC CARDS -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-label">Saldo Saat Ini</div>
+            <div class="metric-value" id="ov-saldo">Rp 0</div>
+            <div class="metric-note" id="ov-saldo-note">—</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Pemasukan Bulan Ini</div>
+            <div class="metric-value green" id="ov-income">Rp 0</div>
+            <div class="metric-note" id="ov-income-note">—</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Pengeluaran Bulan Ini</div>
+            <div class="metric-value red" id="ov-expense">Rp 0</div>
+            <div class="metric-note" id="ov-expense-note">—</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Tugas Selesai</div>
+            <div class="metric-value" id="ov-tasks">0 / 0</div>
+            <div class="metric-note" id="ov-tasks-note">—</div>
+          </div>
+        </div>
+
+        <!-- RECENT TRANSACTIONS + TODAY TASKS -->
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Transaksi Terakhir</span>
+              <button class="link-btn" onclick="switchTab('finance', document.querySelector('[data-tab=finance]'))">Lihat semua →</button>
+            </div>
+            <div id="ov-tx-list" class="tx-list">
+              <p class="empty-msg">Belum ada transaksi.</p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Tugas Hari Ini</span>
+              <button class="link-btn" onclick="switchTab('tasks', document.querySelector('[data-tab=tasks]'))">Lihat semua →</button>
+            </div>
+            <div id="ov-task-list" class="task-list">
+              <p class="empty-msg">Belum ada tugas.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FINANCE TAB -->
+      <div id="tab-finance" class="tab-content">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Keuangan</h2>
+            <p class="page-sub">Kelola pemasukan & pengeluaran kamu</p>
+          </div>
+          <button class="primary-btn" onclick="openModal('modal-tx')">+ Tambah Transaksi</button>
+        </div>
+
+        <!-- BUDGET BARS -->
+        <div class="card" style="margin-bottom:1.5rem;">
+          <div class="card-header">
+            <span class="card-title">Anggaran per Kategori</span>
+            <button class="link-btn" onclick="openModal('modal-budget')">Edit anggaran →</button>
+          </div>
+          <div id="budget-bars"></div>
+        </div>
+
+        <!-- ALL TRANSACTIONS -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Semua Transaksi</span>
+            <select id="filter-month" onchange="renderFinance()" style="font-size:12px; padding:4px 8px; border:0.5px solid #ddd; border-radius:6px; background:transparent; color:inherit; cursor:pointer;"></select>
+          </div>
+          <div id="all-tx-list" class="tx-list"></div>
+        </div>
+      </div>
+
+      <!-- TASKS TAB -->
+      <div id="tab-tasks" class="tab-content">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Tugas</h2>
+            <p class="page-sub">Rencanakan hari kamu</p>
+          </div>
+          <button class="primary-btn" onclick="openModal('modal-task')">+ Tambah Tugas</button>
+        </div>
+
+        <div class="task-filters">
+          <button class="filter-chip active" data-filter="all" onclick="filterTasks('all', this)">Semua</button>
+          <button class="filter-chip" data-filter="today" onclick="filterTasks('today', this)">Hari ini</button>
+          <button class="filter-chip" data-filter="upcoming" onclick="filterTasks('upcoming', this)">Mendatang</button>
+          <button class="filter-chip" data-filter="done" onclick="filterTasks('done', this)">Selesai</button>
+        </div>
+
+        <div id="task-list-main" class="task-list-full"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- MODAL: ADD TRANSACTION -->
+  <div id="modal-tx" class="modal-overlay hidden" onclick="closeModalOutside(event,'modal-tx')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Tambah Transaksi</h3>
+        <button onclick="closeModal('modal-tx')" class="modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Jenis</label>
+          <div class="radio-group">
+            <label class="radio-opt"><input type="radio" name="tx-type" value="expense" checked /> Pengeluaran</label>
+            <label class="radio-opt"><input type="radio" name="tx-type" value="income" /> Pemasukan</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Nama</label>
+          <input type="text" id="tx-name" placeholder="Contoh: Makan Siang" />
+        </div>
+        <div class="form-group">
+          <label>Jumlah (Rp)</label>
+          <input type="number" id="tx-amount" placeholder="Contoh: 35000" min="0" />
+        </div>
+        <div class="form-group">
+          <label>Kategori</label>
+          <select id="tx-cat">
+            <option>Makanan & Minuman</option>
+            <option>Transportasi</option>
+            <option>Hiburan</option>
+            <option>Tagihan</option>
+            <option>Kesehatan</option>
+            <option>Belanja</option>
+            <option>Tabungan</option>
+            <option>Gaji</option>
+            <option>Freelance</option>
+            <option>Lainnya</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Tanggal</label>
+          <input type="date" id="tx-date" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="secondary-btn" onclick="closeModal('modal-tx')">Batal</button>
+        <button class="primary-btn" onclick="saveTx()">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: BUDGET -->
+  <div id="modal-budget" class="modal-overlay hidden" onclick="closeModalOutside(event,'modal-budget')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Edit Anggaran</h3>
+        <button onclick="closeModal('modal-budget')" class="modal-close">✕</button>
+      </div>
+      <div class="modal-body" id="budget-form"></div>
+      <div class="modal-footer">
+        <button class="secondary-btn" onclick="closeModal('modal-budget')">Batal</button>
+        <button class="primary-btn" onclick="saveBudget()">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD TASK -->
+  <div id="modal-task" class="modal-overlay hidden" onclick="closeModalOutside(event,'modal-task')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Tambah Tugas</h3>
+        <button onclick="closeModal('modal-task')" class="modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Nama Tugas</label>
+          <input type="text" id="task-name" placeholder="Contoh: Meeting jam 10 pagi" />
+        </div>
+        <div class="form-group">
+          <label>Tanggal</label>
+          <input type="date" id="task-date" />
+        </div>
+        <div class="form-group">
+          <label>Kategori</label>
+          <select id="task-cat">
+            <option>Kerja</option>
+            <option>Kesehatan</option>
+            <option>Personal</option>
+            <option>Keuangan</option>
+            <option>Belajar</option>
+            <option>Lainnya</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Prioritas</label>
+          <select id="task-priority">
+            <option value="normal">Normal</option>
+            <option value="high">Tinggi</option>
+            <option value="low">Rendah</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="secondary-btn" onclick="closeModal('modal-task')">Batal</button>
+        <button class="primary-btn" onclick="saveTask()">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
